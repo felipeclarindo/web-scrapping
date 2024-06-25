@@ -2,6 +2,9 @@
 from selenium.webdriver.firefox.service import Service as ServiceFirefox
 from selenium.webdriver.chrome.service import Service as ServiceChrome
 from selenium.webdriver.edge.service import Service as ServiceEdge
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
 
 def create_driver(browser: str) -> webdriver.Remote:
@@ -57,6 +60,24 @@ def create_driver(browser: str) -> webdriver.Remote:
         print(v)
     except Exception as e:
         print(e)
+    return ""
+
+def install_driver(browser:str) -> str:
+    try:
+        browser = browser.strip().lower()
+        if browser:
+            if browser == "chrome":
+                return ChromeDriverManager().install()
+            elif browser == "edge":
+                return EdgeChromiumDriverManager().install()
+            elif browser == "firefox":
+                return GeckoDriverManager().install()
+            else:
+                raise Exception("Browser not found.")
+        else:
+            raise Exception("Invalid Browser")
+    except Exception as e:
+        print(f"Error installing driver: {e}")
     return ""
 
 if __name__ == "__main__":

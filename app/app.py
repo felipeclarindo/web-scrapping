@@ -1,10 +1,11 @@
-from modules.Scrappy import Scrappy
+from modules.scrappy import Scrappy
 from utils.utils import clear
 from time import sleep
 
 class Main:
-    def __init__(self, browser:str, url: str) -> None:
-        self.scrappy = Scrappy(browser, url)
+    def __init__(self, url: str) -> None:
+        self.url = url
+        self.browser = ""
 
     def menu(self) -> None:
         self.banner()
@@ -12,6 +13,11 @@ class Main:
         print("[2] Install Drivers")
         print("[3] Exit")
 
+    def browsers_menu(self) -> None:
+        self.banner()
+        print("[1] Chrome")
+        print("[2] Edge")
+        print("[3] Firefox")
 
     def banner(self) -> None:
         clear()
@@ -31,12 +37,21 @@ class Main:
                 self.banner()
                 input("PRESS ENTER TO CONTINUE...")
                 self.menu()
-                choice = input("Choice one option: ")
+                choice = input("Choose one option: ")
                 match choice:
                     case "1":
-                        self.banner()
-                        print("Starting Scrapper...")
-                        sleep(1)
+                        self.browsers_menu()
+                        browser = str(input("Choose one browser: ")).lower().strip()
+                        if browser in ['chrome', 'edge', 'firefox']:
+                            self.banner()
+                            self.browser = browser
+                            self.scrappy = Scrappy(self.browser, self.url)
+                            print("Starting Scrapper...")
+                            sleep(1)
+                            self.scrappy.generate_plan()
+                            print("Successful")
+                        else:
+                            print("Browser invalid")
                     case "2":
                         pass
                     case "3":
@@ -61,5 +76,5 @@ class Main:
                 
 
 if __name__ == "__main__":
-    main = Main("chrome", "https://www.aadvantageeshopping.com/b____.htm")
+    main = Main("https://www.aadvantageeshopping.com/b____.htm")
     main.run()

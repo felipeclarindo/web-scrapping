@@ -1,12 +1,12 @@
-import openpyxl.workbook
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from .drivers.create_driver import create_driver
 from selenium.webdriver.common.by import By
+from .driver import create_driver
 import openpyxl
+from datetime import date
 
 class Scrappy:
-    def __init__(self, browser:str, url:str) -> None:
+    def __init__(self, browser:str, url:str) -> None:      
         # Creating list of names
         self.companies_names = []
         # Creating list of values
@@ -54,26 +54,34 @@ class Scrappy:
                         value_split = values_split[-2]
                         value_list.insert(0, value_split)
                         value = " ".join(value_list)
-
+                        if "/$" not in value:
+                            value += "/$"
+                self.companies_values.append(value)
         return self.companies_values
 
     def generate_plan(self):
+        # Getting name and values
+        self.get_names_of_companies()
+        self.get_values_of_companies()
+
+        # Number of cell when start data
         index = 2
-        plan = openpyxl.workbook()
-        companies = plan["Sheet"]
-        companies.title("Companies")
-        companies["A1"] = "Names"
-        companies["B1"] = "Values"
+        # Instancing workbook
+        workbook = openpyxl.Workbook()
+        # Initializating worbook
+        sheet = workbook.active
+        # Configurated title
+        sheet.title = "Companies"
+        # Names of sheet
+        sheet["A1"] = "Names"
+        sheet["B1"] = "Values"
         for name, value in zip(self.companies_names, self.companies_values):
-            companies.cell(column=1, row=index, value=name)
-            companies.cell(column=2, row=index, value=value)
+            sheet.cell(column=1, row=index, value=name)
+            sheet.cell(column=2, row=index, value=value)
+            sheet.cell(column=3, row=index value=date.date())
             index += 1
-        plan.save("companies_infos.xlsx")
+        workbook.save("companies_infos.xlsx")
 
 if __name__ == "__main__":
     scrap = Scrappy("chrome", "https://www.aadvantageeshopping.com/b____.htm")
-    names = scrap.get_names_of_companies()
-    values = scrap.get_values_of_companies()
-
-    for name, value in zip(names, values):
-        print(f"{name} -> {value}")
+    scrap.generate_plan()
